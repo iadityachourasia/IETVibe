@@ -5,6 +5,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { RouteGuard } from "@/components/providers/RouteGuard";
 import { Header } from "@/components/layout/Header";
+import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,14 @@ export default function RootLayout({
             <main className="pt-16">
               {children}
             </main>
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                style: { background: '#1e293b', color: '#f8fafc' },
+                success: { style: { background: '#10b981' } },
+                error: { style: { background: '#ef4444' } }
+              }}
+            />
           </RouteGuard>
         </AuthProvider>
       </body>

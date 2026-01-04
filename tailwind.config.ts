@@ -11,6 +11,9 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'iet-blue': '#1E3A8A',
+        'davv-gold': '#F59E0B',
+        'vibe-purple': '#8B5CF6'
       },
     },
   },
