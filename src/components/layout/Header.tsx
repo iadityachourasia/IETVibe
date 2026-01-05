@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { LogIn, LogOut } from "lucide-react";
+import { LogIn, LogOut, Loader2 } from "lucide-react";
 import Image from "next/image";
 
 export function Header() {
-    const { user, signInWithGoogle, logout } = useAuth();
+    const { user, loading, logout } = useAuth();
 
     return (
         <header className="bg-gradient-to-r from-[#1E3A8A] via-blue-900 to-indigo-900 
@@ -31,7 +31,12 @@ export function Header() {
                         <Link href="/leaderboard" className="px-4 py-2 rounded-xl hover:bg-white/10 font-medium transition-all hover:scale-105">🏆 Leaderboard</Link>
                         <Link href="/profile" className="px-4 py-2 rounded-xl hover:bg-white/10 font-medium transition-all hover:scale-105">👤 Profile</Link>
                     </nav>
-                    {user ? (
+
+                    {loading ? (
+                        <div className="w-10 h-10 flex items-center justify-center">
+                            <Loader2 className="w-5 h-5 text-blue-300 animate-spin" />
+                        </div>
+                    ) : user ? (
                         <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-2xl border border-white/20">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-sm font-bold overflow-hidden relative">
@@ -44,7 +49,9 @@ export function Header() {
                                             unoptimized
                                         />
                                     ) : (
-                                        user.name?.[0] || '?'
+                                        <span className="text-white font-bold">
+                                            {user.name?.[0]?.toUpperCase() || '?'}
+                                        </span>
                                     )}
                                 </div>
                                 <span className="font-medium text-white max-w-[120px] truncate">{user.name}</span>
@@ -58,13 +65,21 @@ export function Header() {
                             </button>
                         </div>
                     ) : (
-                        <button
-                            onClick={signInWithGoogle}
-                            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 flex items-center gap-2"
-                        >
-                            <LogIn className="w-4 h-4" />
-                            <span>Start Questing</span>
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <Link
+                                href="/login"
+                                className="px-4 py-2 text-blue-100 hover:text-white font-medium transition-colors"
+                            >
+                                Sign In
+                            </Link>
+                            <Link
+                                href="/signup"
+                                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 flex items-center gap-2 transition-all hover:scale-105"
+                            >
+                                <LogIn className="w-4 h-4" />
+                                <span>Get Started</span>
+                            </Link>
+                        </div>
                     )}
                 </div>
             </div>

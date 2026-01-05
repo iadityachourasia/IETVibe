@@ -1,21 +1,39 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+    apiKey: "AIzaSyBkLM97a3W6CZ91GtEBX6-4Rj9mImj-NwI",
+    authDomain: "ietvibez.firebaseapp.com",
+    databaseURL: "https://ietvibez-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "ietvibez",
+    storageBucket: "ietvibez.firebasestorage.app",
+    messagingSenderId: "783967739352",
+    appId: "1:783967739352:web:a03c36497afa1994af26ad",
+    measurementId: "G-5PTW69FMQM"
 };
 
 // Initialize Firebase
+console.log("Initializing Firebase with project:", firebaseConfig.projectId);
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
-const db = getFirestore(app);
+
+// Use initializeFirestore to allow for settings like long polling if needed
+const db = initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+});
+
 const googleProvider = new GoogleAuthProvider();
 
-export { app, auth, db, googleProvider };
+let analytics;
+if (typeof window !== "undefined") {
+    // Only initialize analytics on the client side
+    try {
+        analytics = getAnalytics(app);
+    } catch (e) {
+        console.warn("Firebase Analytics initialization failed:", e);
+    }
+}
+
+export { app, auth, db, googleProvider, analytics };

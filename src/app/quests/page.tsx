@@ -19,19 +19,51 @@ export default function QuestsPage() {
     useEffect(() => {
         const loadQuests = async () => {
             try {
-                // Initialize sample quests if needed
-                await createSampleQuests();
+                // Initialize sample quests if needed - with timeout
+                const initTimeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Init Timeout")), 3000));
+                await Promise.race([createSampleQuests(), initTimeout]).catch(e => console.warn(e));
 
                 const questsRef = collection(db, "quests");
-                const snapshot = await getDocs(questsRef);
-                const questsData = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
+                const fetchTimeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Fetch Timeout")), 5000));
+                const fetchDocs = getDocs(questsRef);
+
+                const snapshot = await Promise.race([fetchDocs, fetchTimeout]);
+                const questsData = snapshot.docs.map((docSnap) => ({
+                    id: docSnap.id,
+                    ...docSnap.data()
                 })) as Quest[];
 
+                console.log("Quests loaded from Firestore:", questsData.length);
                 setQuests(questsData);
+
+                // Cache quests for offline mode
+                localStorage.setItem('cached_quests', JSON.stringify(questsData));
             } catch (error) {
                 console.error("Error loading quests:", error);
+
+                // Fallback to LocalStorage first
+                const cachedQuests = localStorage.getItem('cached_quests');
+                if (cachedQuests) {
+                    try {
+                        const parsed = JSON.parse(cachedQuests);
+                        console.log("Loaded cached quests:", parsed.length);
+                        setQuests(parsed);
+                        setLoading(false);
+                        return;
+                    } catch (e) {
+                        console.warn("Failed to parse cached quests", e);
+                    }
+                }
+
+                // Fallback to sample quests if offline and no cache
+                console.log("Loading sample quests as fallback");
+                import("@/lib/sampleQuests").then(module => {
+                    const fallbackQuests = module.SAMPLE_QUESTS.map((q, idx) => ({
+                        ...q,
+                        id: `sample-${idx}`
+                    })) as Quest[];
+                    setQuests(fallbackQuests);
+                });
             } finally {
                 setLoading(false);
             }

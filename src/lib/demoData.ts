@@ -112,6 +112,10 @@ export async function runPopulation() {
                 specialization: ["Coding", "Design", "Engineering"][Math.floor(Math.random() * 3)],
                 streak: index === 0 ? 15 : Math.floor(Math.random() * 5),
                 badges: userBadges,
+                authProvider: 'email',
+                onboardingCompleted: true,
+                firstName: user.name.split(' ')[0],
+                lastName: user.name.split(' ')[1] || '',
                 createdAt: serverTimestamp(),
                 lastActive: serverTimestamp()
             };

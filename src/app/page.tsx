@@ -5,7 +5,7 @@ import { ArrowRight, Shield, Trophy, Users } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 
 export default function Home() {
-  const { user, signInWithGoogle } = useAuth();
+  const { user } = useAuth();
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white selection:bg-purple-500/30">
@@ -40,13 +40,13 @@ export default function Home() {
                 <ArrowRight className="w-5 h-5" />
               </Link>
             ) : (
-              <button
-                onClick={signInWithGoogle}
+              <Link
+                href="/signup"
                 className="px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 font-bold hover:scale-105 transition-transform flex items-center gap-2"
               >
                 Start Your Journey
                 <ArrowRight className="w-5 h-5" />
-              </button>
+              </Link>
             )}
             <Link
               href="#features"
